@@ -5,11 +5,14 @@ import java.awt.event.ActionListener;
 import java.sql.SQLException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import javax.swing.JButton;
 
 import View.ShowWinnersOffers;
 import Model.GreedyAlgorithm;
@@ -124,7 +127,6 @@ public class Presenter {
         String fechaInscripcion = ff.getFechaInscripcion();
         String fechaEvento = ff.getFechaEvento();
         int cash = ff.getDinero();
-
         try {
             if (!bdd.existeOferta(dni, fechaInscripcion, fechaEvento, in, out, cash)) {
                 bdd.insertDataIntoDatabase(dni, nacionalidad, in, out, cash, fechaInscripcion, fechaEvento);
@@ -150,11 +152,10 @@ public class Presenter {
         Offer of = null;
         
         // Verificar si los datos son válidos antes de guardar
-        if (!dni.isEmpty() && cash > 0 && verificationTime(in,out)) {
+        if (!dni.isEmpty() && cash >=1000 && verificationTime(in,out)) {
             of=new Offer();
             of.collecting(dni, nacionalidad, in, out, cash, fechaInscripcion, fechaEvento);
             di.close(); 
-            
         } else {
             di.Special_msm("Por favor, verifica los datos ingresados.", "Error de Validación");
         }
@@ -166,40 +167,46 @@ public class Presenter {
     	DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
         LocalTime inTime = LocalTime.parse(in, timeFormatter);
         LocalTime outTime = LocalTime.parse(out, timeFormatter);
-        return inTime.isBefore(outTime);
+        Duration duration = Duration.between(inTime, outTime);
+        return inTime.isBefore(outTime) && duration.toHours()>0;
     }
 
     private void accionarVerWinners() {
         this.so.addVerListeners(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String fecha = so.getFechaInscricion();
+                // Obtener el botón que fue presionado
+                JButton botonPresionado = (JButton) e.getSource();
+                // Obtener la fecha asociada al botón
+                String fecha = (String) botonPresionado.getClientProperty("fecha");
                 ga.setFecha(fecha);
                 so.close();
-                sw.setFechaInscripcion(fecha);
                 sw.show();
                 setWinners(fecha);
             }
         });
     }
 
+
    
     private void setWinners(String fecha) {
-    	int y=50;
-    	List<Offer> lista= new ArrayList<Offer>();
-    	lista=so.getListOffertsByDate(fecha); //lista con la fecha que seleccione en el boton
-    	ga.setList(lista); //se la malgo para modificarla con el alg. goloso
-  ////////
-    	List<Offer> listaGanadores= new ArrayList<Offer>();
-    	listaGanadores=ga.selectBestOffers();
-        sw.printRecaudado(ga.getTotal()+"");
-    	////////
-    	for(Offer ff:listaGanadores) {
-    		y+=30;
-    		StringBuilder cad=new StringBuilder();
-    		cad.append(" DNi:").append(ff.getDni()).append(", HORAS:").append(ff.getIn()).append("-").append(ff.getOut()).append(", $").append(ff.getDinero());
-    		sw.printWinners(y, cad);
-    	}
+        sw.clearWinnersPanel(); // Limpiar componentes previos
+        sw.setFechaInscripcion(fecha);
+        int y = 50;
+        List<Offer> lista = so.getListOffertsByDate(fecha);
+        ga.setList(lista);
+
+        List<Offer> listaGanadores = ga.selectBestOffers();
+        sw.printRecaudado(ga.getTotal() + "");
+
+        for (Offer ff : listaGanadores) {
+            y += 30;
+            StringBuilder cad = new StringBuilder();
+            cad.append(" DNI:").append(ff.getDni())
+               .append(", HORAS:").append(ff.getIn()).append("-").append(ff.getOut())
+               .append(", $").append(ff.getDinero());
+            sw.printWinners(y, cad);
+        }
     }
     
     private void imprimir(List<Offer> list) {

@@ -26,7 +26,7 @@ public class ShowWinnersOffers {
         this.cad.append(fecha);
         setTitle();
     }
-
+    
     private void initialize() {
         frame = new JFrame();
         frame.setTitle("Ofertas ganadoras");
@@ -51,7 +51,9 @@ public class ShowWinnersOffers {
         btnBack = new JButton(scaledIcon);
         btnBack.setBounds(0, 0, 30, 30);
         panel.add(btnBack);
-
+    }
+    
+    private void setImage() {
         JPanel panel_img = new JPanel() {
             private Image imagenFondo;
             {
@@ -73,7 +75,6 @@ public class ShowWinnersOffers {
 
     private void setTitle() {
         JLabel lblTit = new JLabel(cad.toString());
-        System.out.println(cad.toString());
         lblTit.setBounds(10, 55, 364, 14);
         panel.add(lblTit);
     }
@@ -93,6 +94,20 @@ public class ShowWinnersOffers {
         panel.setPreferredSize(new java.awt.Dimension(364, y + 30));
         panel.revalidate();
     }
+    
+    public void clearWinnersPanel() {
+        panel.removeAll();
+        panel.add(btnBack);
+        cad.setLength(0); 
+        cad.append("Ganadores de la fecha "); 
+        setTitle();
+        setImage();
+        panel.setPreferredSize(new java.awt.Dimension(364, 400));
+        panel.revalidate();
+        panel.repaint();
+    }
+
+
 
     public void addBackListener(ActionListener listener) {
         btnBack.addActionListener(listener);

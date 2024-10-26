@@ -56,15 +56,11 @@ public class GreedyAlgorithm {
         Collections.sort(selectedOffers, Comparator.comparingInt(Offer::getDinero).reversed());
 
         List<Offer> candidatos = new ArrayList<>();
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
 
         int maximaOFerta = getMaxOFerta();
         int minimaOFerta = getMinOFerta();
 
         for (Offer ff : selectedOffers) {
-            LocalTime horaIn = LocalTime.parse(ff.getIn(), timeFormatter);
-            LocalTime horaOut = LocalTime.parse(ff.getOut(), timeFormatter);
-
             if (ff.getDinero() <= maximaOFerta && ff.getDinero() > minimaOFerta) { 
                 if (verificationAgenda(candidatos, ff)) {
                     candidatos.add(ff); 
@@ -76,7 +72,7 @@ public class GreedyAlgorithm {
         return candidatos;
     }
 
-    private boolean verificationAgenda(List<Offer> candidatos, Offer oferta) {
+    public boolean verificationAgenda(List<Offer> candidatos, Offer oferta) {
         LocalTime ofertaTimeIn = toDate(oferta.getIn());
         LocalTime ofertaTimeOut = toDate(oferta.getOut());
 
@@ -84,7 +80,7 @@ public class GreedyAlgorithm {
             LocalTime candTimeIn = toDate(ff.getIn());
             LocalTime candTimeOut = toDate(ff.getOut());
 
-            // Verifica que las horas no se superpongan, permitiendo que los tiempos coincidan
+            // Verificando que las horas no se superpongan
             if (!(ofertaTimeOut.isBefore(candTimeIn) || ofertaTimeIn.isAfter(candTimeOut) || ofertaTimeIn.equals(candTimeOut))) {
                 return false; 
             }
@@ -92,8 +88,7 @@ public class GreedyAlgorithm {
         return true;
     }
 
-
-    private LocalTime toDate(String date) {
+    public LocalTime toDate(String date) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
         LocalTime time = null;
         try {

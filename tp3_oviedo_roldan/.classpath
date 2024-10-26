@@ -11,5 +11,6 @@
 	<classpathentry kind="lib" path="C:/Users/usuario/Downloads/jcalendar-1.4/lib/jgoodies-looks-2.4.1.jar"/>
 	<classpathentry kind="lib" path="C:/Users/usuario/Downloads/jcalendar-1.4/lib/junit-4.6.jar"/>
 	<classpathentry kind="lib" path="mysql-connector-j-9.1.0.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/5"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

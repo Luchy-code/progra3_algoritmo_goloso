@@ -1,6 +1,10 @@
 package View;
 
 import java.awt.EventQueue;
+import java.awt.Toolkit;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,7 +35,7 @@ public class ShowOffers {
         this.ofertas = new ArrayList<>();
         initialize();
     }
-
+    
     public void copyOfferes(List<Offer> inscripciones) {
         for (Offer ff : inscripciones) {
             this.ofertas.add(ff);
@@ -89,8 +93,21 @@ public class ShowOffers {
             JButton btnVer = new JButton("Ver ganador/es");
             btnVer.setBounds(250, yPosition - 20, 150, 14);
             contentPane.add(btnVer);
-            btnVerList.add(btnVer); // Agregar el botón a la lista
-            this.setFechaInscricion(fecha);
+            
+            // Guardar la fecha en la propiedad del botón
+            btnVer.putClientProperty("fecha", fecha);
+            
+            // Configurar el ActionListener para cada botón
+            btnVer.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    // Obtener la fecha guardada en el botón al que se hizo clic
+                    String fechaSeleccionada = (String) btnVer.getClientProperty("fecha");
+                    copiarFecha(fechaSeleccionada); 
+                }
+            });
+
+            btnVerList.add(btnVer); // Mantener esta línea para la lista
 
             String[] columnas = {"Dni", "Argentino?", "Fecha", "Hora in", "Hora out", "Oferta"};
             Object[][] datos = generarDatosTabla(ofertasPorFecha.get(fecha));
@@ -108,16 +125,21 @@ public class ShowOffers {
         actualizarPantalla();
     }
 
+    // Método para copiar la fecha seleccionada
+    private void copiarFecha(String fecha) {
+        StringSelection stringSelection = new StringSelection(fecha);
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        clipboard.setContents(stringSelection, null);
+        this.fechaInscripcion = fecha;
+    }
+
+
     public void addVerListeners(ActionListener listener) {
         for (JButton btn : btnVerList) {
             btn.addActionListener(listener);
         }
     }
-
-	private void setFechaInscricion(String fecha) {
-		this.fechaInscripcion=fecha;
-	}
-	
+    
 	public String getFechaInscricion() {
 		return this.fechaInscripcion;
 	}

@@ -32,7 +32,7 @@ public class DataInputForm {
     private JComboBox<String> nacionalityComboBox;
     private SpinnerNumberModel money;
     private JButton btnSubmit,btnBack;
-    private String hoy=this.getNewDate(0),manana=this.getNewDate(1);
+    private String hoy=this.getNewDate(0), manana=this.getNewDate(1);
 
     public DataInputForm() {
         initialize();
@@ -153,7 +153,7 @@ public class DataInputForm {
         panelMoney.setBackground(new Color(175, 238, 238));
         panelMoney.setLayout(new FlowLayout());
 
-        money = new SpinnerNumberModel(1000, 1000, 200000, 1); // mínimo 1000, máximo 200000
+        money = new SpinnerNumberModel(1000, 1000, 2000000, 1); // mínimo 1000, máximo 2.000.000
         JSpinner numberSpinner = new JSpinner(money);
         panelMoney.add(numberSpinner);
 
